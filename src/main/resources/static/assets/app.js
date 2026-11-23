@@ -433,6 +433,55 @@ function displayReservations(reservations) {
     });
 }
 
+/* ---------- UPDATE RESERVATION ---------- */
+async function updateReservationSeats(reservationId, eventId, currentSeats) {
+
+    const newSeats = prompt(
+        `Currently booked: ${currentSeats} seats.\nEnter the new seat count (1-10):`,
+        currentSeats
+    );
+
+    // If user clicks Cancel
+    if (newSeats === null) {
+        return;
+    }
+
+    const seats = Number(newSeats);
+
+    // Validate seat count
+    if (!Number.isInteger(seats) || seats < 1 || seats > 10) {
+        alert("Please enter a valid number of seats between 1 and 10.");
+        return;
+    }
+
+    // No changes needed
+    if (seats === currentSeats) {
+        alert("The seat count has not changed.");
+        return;
+    }
+
+    try {
+
+        const response = await api(`/api/reservations/${reservationId}`, {
+            method: "PUT",
+            body: JSON.stringify({
+                eventId: eventId,
+                seats: seats
+            })
+        });
+
+        alert("Reservation updated successfully!");
+
+        // Refresh reservations and event seat availability
+        await loadMyReservations();
+        await loadEvents();
+
+    } catch (error) {
+        alert("Failed to update reservation: " + error.message);
+    }
+}
+
+
 /* ---------- CANCEL RESERVATION ---------- */
 
 async function cancelReservation(reservationId) {

@@ -105,20 +105,33 @@ public class EventService {
         return mapToResponse(updatedEvent);
     }
 
-    // Delete event (ADMIN only, enforced by SecurityConfig)
-    public void deleteEvent(String eventId) {
-        Event event = findEventById(eventId);
+// Delete event (ADMIN can delete any, ORGANIZER can delete own)
+public void deleteEvent(
+        String eventId,
+        String username,
+        Role role
+) {
+    Event event = findEventById(eventId);
 
-        // Prevent deletion if reservations exist
-        if (reservationRepository.existsByEventId(eventId)) {
-            throw new ApiException(
-                    HttpStatus.CONFLICT,
-                    "Cannot delete an event that has reservations"
-            );
-        }
-
-        eventRepository.delete(event);
+    // Organizers can only delete their own events
+    if (role == Role.ORGANIZER
+            && !event.getOrganizerUsername().equals(username)) {
+        throw new ApiException(
+                HttpStatus.FORBIDDEN,
+                "You can only delete your own events"
+        );
     }
+
+    // Prevent deletion if reservations exist
+    if (reservationRepository.existsByEventId(eventId)) {
+        throw new ApiException(
+                HttpStatus.CONFLICT,
+                "Cannot delete an event that has reservations"
+        );
+    }
+
+    eventRepository.delete(event);
+}
 
     // Find event or throw 404
     private Event findEventById(String eventId) {

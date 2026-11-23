@@ -109,6 +109,16 @@ function showDashboard() {
             state.role !== "ADMIN"
         );
     }
+
+    // Show Create Event form only for ADMIN and ORGANIZER
+const createEventSection = document.getElementById("create-event-section");
+
+if (createEventSection) {
+    createEventSection.classList.toggle(
+        "hidden",
+        !["ADMIN", "ORGANIZER"].includes(state.role)
+    );
+}
 }
 
 /* ---------- LOGIN ---------- */
@@ -826,3 +836,43 @@ async function deleteUser(userId, username) {
 
     }
 }
+
+// =========================
+// CREATE EVENT
+// =========================
+
+document.getElementById("create-event-form")
+    .addEventListener("submit", async (event) => {
+
+        event.preventDefault();
+
+        const message = document.getElementById("create-event-message");
+        message.textContent = "Creating event...";
+
+        const eventData = {
+            name: document.getElementById("event-name").value.trim(),
+            description: document.getElementById("event-description").value.trim(),
+            venue: document.getElementById("event-venue").value.trim(),
+            eventDate: document.getElementById("event-date").value,
+            totalSeats: Number(document.getElementById("event-total-seats").value),
+            ticketPrice: Number(document.getElementById("event-ticket-price").value)
+        };
+
+        try {
+            await api("/api/events", {
+                method: "POST",
+                body: eventData
+            });
+
+            message.textContent = "Event created successfully!";
+            message.style.color = "green";
+
+            document.getElementById("create-event-form").reset();
+
+            await loadEvents();
+
+        } catch (error) {
+            message.textContent = "Failed to create event: " + error.message;
+            message.style.color = "red";
+        }
+    });

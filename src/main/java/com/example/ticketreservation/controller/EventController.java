@@ -78,14 +78,21 @@ public class EventController {
         return ResponseEntity.ok(response);
     }
 
-    // Delete event - ADMIN only
-    @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteEvent(
-            @PathVariable String id
-    ) {
-        eventService.deleteEvent(id);
+// Delete event - ADMIN or ORGANIZER
+@PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZER')")
+@DeleteMapping("/{id}")
+public ResponseEntity<Void> deleteEvent(
+        @PathVariable String id,
+        Authentication authentication
+) {
+    Role role = SecurityUtils.getCurrentUserRole(authentication);
 
-        return ResponseEntity.noContent().build();
-    }
+    eventService.deleteEvent(
+            id,
+            authentication.getName(),
+            role
+    );
+
+    return ResponseEntity.noContent().build();
+}
 }

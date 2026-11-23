@@ -78,17 +78,24 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
 
+                        // Public website files
+                        .requestMatchers(
+                                "/",
+                                "/index.html",
+                                "/favicon.ico",
+                                "/assets/**"
+                        ).permitAll()
+
                         // Public authentication endpoints
                         .requestMatchers(
                                 "/api/auth/register",
                                 "/api/auth/login"
                         ).permitAll()
 
-                        // Perimeter protection for admin endpoints
+                        // Admin endpoints
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
-                        // All other endpoints require authentication;
-                        // specific roles are enforced via @PreAuthorize on controller methods
+                        // All other API endpoints require login
                         .anyRequest().authenticated()
                 )
 

@@ -9,6 +9,9 @@ import java.util.List;
 
 public interface ReservationRepository extends MongoRepository<Reservation, String> {
     List<Reservation> findByCustomerUsername(String customerUsername);
+    boolean existsByCustomerUsernameAndStatus(
+        String customerUsername,
+        ReservationStatus status);
     List<Reservation> findByEventIdIn(Collection<String> eventIds);
     boolean existsByEventId(String eventId);
     long countByStatus(ReservationStatus status);

@@ -70,5 +70,20 @@ public ResponseEntity<UserResponse> updateUser(
     return ResponseEntity.ok(response);
 }
 
+// ADMIN: Delete a user
+@PreAuthorize("hasRole('ADMIN')")
+@DeleteMapping("/users/{userId}")
+public ResponseEntity<Void> deleteUser(
+        @PathVariable String userId,
+        java.security.Principal principal) {
+
+    adminService.deleteUser(
+            userId,
+            principal.getName()
+    );
+
+    return ResponseEntity.noContent().build();
+}
+
 
 }

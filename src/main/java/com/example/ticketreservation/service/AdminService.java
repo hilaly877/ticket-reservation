@@ -112,4 +112,36 @@ public UserResponse updateUser(
 
     return UserResponse.from(updatedUser);
 }
+
+// ADMIN: Delete a user
+public void deleteUser(String userId, String currentUsername) {
+
+    AppUser user = userRepository.findById(userId)
+            .orElseThrow(() -> new ApiException(
+                    HttpStatus.NOT_FOUND,
+                    "User not found"
+            ));
+
+    // Prevent admin from deleting their own account
+    if (user.getUsername().equals(currentUsername)) {
+        throw new ApiException(
+                HttpStatus.FORBIDDEN,
+                "You cannot delete your own account"
+        );
+    }
+
+    // Prevent deleting customers with confirmed reservations
+    if (user.getRole() == Role.CUSTOMER &&
+            reservationRepository.existsByCustomerUsernameAndStatus(
+                    user.getUsername(),
+                    ReservationStatus.CONFIRMED)) {
+
+        throw new ApiException(
+                HttpStatus.CONFLICT,
+                "Cannot delete customer with confirmed reservations"
+        );
+    }
+
+    userRepository.delete(user);
+}
 }

@@ -715,6 +715,13 @@ async function loadAdminUsers() {
                 data-full-name="${escapeHTML(user.fullName)}">
                 Edit Full Name
             </button>
+
+            <button class="delete-user-button"
+                data-user-id="${user.id}"
+                data-username="${escapeHTML(user.username)}">
+                Delete User
+            </button>
+
         `;
 
             usersList.appendChild(card);
@@ -732,11 +739,16 @@ async function loadAdminUsers() {
                     );
 
                 });
-
+            }
+        );
+        document.querySelectorAll(".delete-user-button").forEach(button => {
+            button.addEventListener("click", () => {
+                deleteUser(
+                    button.dataset.userId,
+                    button.dataset.username
+                );
             });
-
-
-
+        });
 
     } catch (error) {
 
@@ -782,6 +794,35 @@ async function editUser(userId, currentFullName) {
     } catch (error) {
 
         alert("Failed to update user: " + error.message);
+
+    }
+}
+
+// Delete a user
+async function deleteUser(userId, username) {
+
+    const confirmed = confirm(
+        `Are you sure you want to delete user "${username}"?`
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+
+        await api(`/api/admin/users/${userId}`, {
+            method: "DELETE"
+        });
+
+        alert("User deleted successfully!");
+
+        await loadAdminUsers();
+        await loadAdminStats();
+
+    } catch (error) {
+
+        alert("Failed to delete user: " + error.message);
 
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 
 import java.time.LocalDateTime;
 
@@ -76,4 +77,23 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(errorResponse);
     }
+
+    // Handle authorization denied errors
+@ExceptionHandler(AuthorizationDeniedException.class)
+public ResponseEntity<ErrorResponse> handleAuthorizationDenied(
+        AuthorizationDeniedException ex,
+        HttpServletRequest request
+) {
+    ErrorResponse errorResponse = new ErrorResponse(
+            LocalDateTime.now(),
+            HttpStatus.FORBIDDEN.value(),
+            HttpStatus.FORBIDDEN.getReasonPhrase(),
+            "You do not have permission to perform this action",
+            request.getRequestURI()
+    );
+
+    return ResponseEntity.status(HttpStatus.FORBIDDEN)
+            .body(errorResponse);
+}
+
 }

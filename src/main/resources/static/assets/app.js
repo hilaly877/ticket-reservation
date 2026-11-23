@@ -527,7 +527,7 @@ if (state.token) {
    TicketHub - Frontend JavaScript
    ========================================= */
 
-const API_URL = "";
+// const API_URL = "";
 
 // Store login information
 const state = {

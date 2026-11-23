@@ -131,6 +131,101 @@ public class ReservationService {
                 .toList();
     }
 
+    // Update reservation seat count
+public ReservationResponse updateReservation(
+        String reservationId,
+        ReservationRequest request,
+        String username
+) {
+
+    // Validate seat count (1-10)
+    if (request.seats() < 1 || request.seats() > 10) {
+        throw new ApiException(
+                HttpStatus.BAD_REQUEST,
+                "You can reserve between 1 and 10 seats"
+        );
+    }
+
+    // Find reservation
+    Reservation reservation = reservationRepository
+            .findById(reservationId)
+            .orElseThrow(() -> new ApiException(
+                    HttpStatus.NOT_FOUND,
+                    "Reservation not found"
+            ));
+
+    // Check ownership
+    if (!reservation.getCustomerUsername().equals(username)) {
+        throw new ApiException(
+                HttpStatus.FORBIDDEN,
+                "You cannot update another customer's reservation"
+        );
+    }
+
+    // Check reservation status
+    if (reservation.getStatus() != ReservationStatus.CONFIRMED) {
+        throw new ApiException(
+                HttpStatus.CONFLICT,
+                "Only confirmed reservations can be updated"
+        );
+    }
+
+    // Find associated event
+    Event event = eventRepository.findById(reservation.getEventId())
+            .orElseThrow(() -> new ApiException(
+                    HttpStatus.NOT_FOUND,
+                    "Event not found"
+            ));
+
+    int oldSeats = reservation.getSeats();
+    int newSeats = request.seats();
+    int difference = newSeats - oldSeats;
+
+    // Increase seats
+    if (difference > 0) {
+
+        Query seatQuery = new Query(
+                Criteria.where("_id").is(event.getId())
+                        .and("availableSeats").gte(difference)
+        );
+
+        Update seatUpdate = new Update()
+                .inc("availableSeats", -difference);
+
+        Event updatedEvent = mongoTemplate.findAndModify(
+                seatQuery,
+                seatUpdate,
+                FindAndModifyOptions.options().returnNew(true),
+                Event.class
+        );
+
+        if (updatedEvent == null) {
+            throw new ApiException(
+                    HttpStatus.CONFLICT,
+                    "Not enough available seats"
+            );
+        }
+    }
+
+    // Decrease seats
+    else if (difference < 0) {
+
+        mongoTemplate.updateFirst(
+                new Query(Criteria.where("_id").is(event.getId())),
+                new Update().inc("availableSeats", -difference),
+                Event.class
+        );
+    }
+
+    // Update reservation details
+    reservation.setSeats(newSeats);
+    reservation.setTotalAmount(newSeats * event.getTicketPrice());
+
+    Reservation updatedReservation = reservationRepository.save(reservation);
+
+    return mapToResponse(updatedReservation);
+}
+
     // Cancel reservation
     public void cancelReservation(
             String reservationId,

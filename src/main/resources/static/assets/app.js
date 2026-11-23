@@ -464,10 +464,10 @@ async function updateReservationSeats(reservationId, eventId, currentSeats) {
 
         const response = await api(`/api/reservations/${reservationId}`, {
             method: "PUT",
-            body: JSON.stringify({
+            body:{
                 eventId: eventId,
                 seats: seats
-            })
+            }
         });
 
         alert("Reservation updated successfully!");

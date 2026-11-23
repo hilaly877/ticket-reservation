@@ -580,20 +580,15 @@ function escapeHTML(value) {
     }[character]));
 }
 
-/* ---------- ADMIN PLACEHOLDER ---------- */
+/* ---------- ADMIN DATA ---------- */
 
 async function loadAdminData() {
 
-    const adminContent =
-        document.getElementById("admin-content");
-
     if (state.role !== "ADMIN") {
-        adminContent.innerHTML = "<p>Access denied.</p>";
         return;
     }
 
-    adminContent.innerHTML =
-        "<p>Admin functions will be implemented in the next step.</p>";
+    await loadAdminStats();
 }
 
 /* ---------- START APPLICATION ---------- */
@@ -604,3 +599,78 @@ if (state.token) {
 } else {
     showLogin();
 }
+
+// =========================
+// ADMIN FUNCTIONS
+// =========================
+
+async function loadAdminStats() {
+
+    try {
+
+        const stats = await api("/api/admin/stats");
+
+        document.getElementById("total-users").textContent =
+            stats.totalUsers;
+
+        document.getElementById("total-events").textContent =
+            stats.totalEvents;
+
+        document.getElementById("total-reservations").textContent =
+            stats.totalReservations;
+
+        document.getElementById("confirmed-reservations").textContent =
+            stats.confirmedReservations;
+
+        document.getElementById("cancelled-reservations").textContent =
+            stats.cancelledReservations;
+
+    } catch (error) {
+
+        alert("Failed to load statistics: " + error.message);
+
+    }
+}
+
+// Create Admin or Organizer
+document.getElementById("create-user-form")
+    .addEventListener("submit", async (event) => {
+
+        event.preventDefault();
+
+        const username =
+            document.getElementById("new-username").value.trim();
+
+        const password =
+            document.getElementById("new-password").value;
+
+        const fullName =
+            document.getElementById("new-fullname").value.trim();
+
+        const role =
+            document.getElementById("new-role").value;
+
+        try {
+
+            await api("/api/admin/users", {
+                method: "POST",
+                body: {
+                    username,
+                    password,
+                    fullName,
+                    role
+                }
+            });
+
+            alert("User created successfully!");
+
+            document.getElementById("create-user-form").reset();
+
+            await loadAdminStats();
+
+        } catch (error) {
+
+            alert("Failed to create user: " + error.message);
+
+        }
+    });

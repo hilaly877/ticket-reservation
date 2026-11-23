@@ -68,7 +68,7 @@
                     placeholder="Username"
                     required
                 >
-                
+
                 <input
                     type="text"
                     id="register-fullname"
@@ -156,15 +156,91 @@
             </div>
 
             <!-- Admin View -->
-            <div id="admin-view" class="view hidden">
+<div id="admin-view" class="view hidden">
 
-                <h2>Admin Panel</h2>
+    <h2>Admin Panel</h2>
 
-                <div id="admin-content">
-                    <!-- Admin content will be loaded here -->
-                </div>
+    <!-- Statistics -->
+    <section class="admin-section">
+        <h3>System Statistics</h3>
 
+        <div class="stats-container">
+
+            <div class="stat-card">
+                <h4>Total Users</h4>
+                <p id="total-users">0</p>
             </div>
+
+            <div class="stat-card">
+                <h4>Total Events</h4>
+                <p id="total-events">0</p>
+            </div>
+
+            <div class="stat-card">
+                <h4>Total Reservations</h4>
+                <p id="total-reservations">0</p>
+            </div>
+
+            <div class="stat-card">
+                <h4>Confirmed</h4>
+                <p id="confirmed-reservations">0</p>
+            </div>
+
+            <div class="stat-card">
+                <h4>Cancelled</h4>
+                <p id="cancelled-reservations">0</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Create User -->
+    <section class="admin-section">
+        <h3>Create Admin / Organizer</h3>
+
+        <form id="create-user-form">
+
+            <input type="text"
+                   id="new-username"
+                   placeholder="Username"
+                   required
+                   minlength="3"
+                   maxlength="50">
+
+            <input type="password"
+                   id="new-password"
+                   placeholder="Password (minimum 8 characters)"
+                   required
+                   minlength="8">
+
+            <input type="text"
+                   id="new-fullname"
+                   placeholder="Full Name"
+                   required>
+
+            <select id="new-role" required>
+                <option value="">Select Role</option>
+                <option value="ORGANIZER">Organizer</option>
+                <option value="ADMIN">Admin</option>
+            </select>
+
+            <button type="submit">Create User</button>
+
+        </form>
+    </section>
+
+    <!-- User List -->
+    <section class="admin-section">
+        <h3>Registered Users</h3>
+
+        <button id="refresh-users-button">Refresh Users</button>
+
+        <div id="users-list">
+            <p>Users will be loaded here.</p>
+        </div>
+    </section>
+
+</div>
 
         </section>
 

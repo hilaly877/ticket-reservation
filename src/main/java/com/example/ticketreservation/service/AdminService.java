@@ -8,6 +8,7 @@ import com.example.ticketreservation.exception.ApiException;
 import com.example.ticketreservation.model.AppUser;
 import com.example.ticketreservation.model.Role;
 import com.example.ticketreservation.model.Reservation;
+import com.example.ticketreservation.dto.AdminUpdateUserRequest;
 import com.example.ticketreservation.model.ReservationStatus;
 import com.example.ticketreservation.repository.EventRepository;
 import com.example.ticketreservation.repository.ReservationRepository;
@@ -93,4 +94,22 @@ public class AdminService {
                 cancelledReservations
         );
     }
+
+    // ADMIN: Update a user's full name
+public UserResponse updateUser(
+        String userId,
+        AdminUpdateUserRequest request) {
+
+    AppUser user = userRepository.findById(userId)
+            .orElseThrow(() -> new ApiException(
+                    HttpStatus.NOT_FOUND,
+                    "User not found"
+            ));
+
+    user.setFullName(request.fullName());
+
+    AppUser updatedUser = userRepository.save(user);
+
+    return UserResponse.from(updatedUser);
+}
 }

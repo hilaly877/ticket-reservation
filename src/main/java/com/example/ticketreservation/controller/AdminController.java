@@ -7,6 +7,7 @@ import com.example.ticketreservation.dto.UserResponse;
 import com.example.ticketreservation.service.AdminService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import com.example.ticketreservation.dto.AdminUpdateUserRequest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,4 +56,19 @@ public class AdminController {
                 adminService.getStats()
         );
     }
+
+    // ADMIN: Update a user's full name
+@PreAuthorize("hasRole('ADMIN')")
+@PutMapping("/users/{userId}")
+public ResponseEntity<UserResponse> updateUser(
+        @PathVariable String userId,
+        @Valid @RequestBody AdminUpdateUserRequest request) {
+
+    UserResponse response =
+            adminService.updateUser(userId, request);
+
+    return ResponseEntity.ok(response);
+}
+
+
 }

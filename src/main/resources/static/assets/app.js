@@ -589,6 +589,7 @@ async function loadAdminData() {
     }
 
     await loadAdminStats();
+    await loadAdminUsers();
 }
 
 /* ---------- START APPLICATION ---------- */
@@ -674,3 +675,113 @@ document.getElementById("create-user-form")
 
         }
     });
+
+
+    // Load all registered users
+async function loadAdminUsers() {
+
+    const usersList = document.getElementById("users-list");
+
+    usersList.innerHTML = "<p>Loading users...</p>";
+
+    try {
+
+        const users = await api("/api/admin/users");
+
+        usersList.innerHTML = "";
+
+        if (users.length === 0) {
+            usersList.innerHTML = "<p>No users found.</p>";
+            return;
+        }
+
+        users.forEach(user => {
+
+            const card = document.createElement("div");
+            card.className = "user-card";
+
+        card.innerHTML = `
+            <p><strong>Username:</strong>
+                ${escapeHTML(user.username)}</p>
+
+            <p><strong>Full Name:</strong>
+                ${escapeHTML(user.fullName)}</p>
+
+            <p><strong>Role:</strong>
+                ${escapeHTML(user.role)}</p>
+
+            <button class="edit-user-button"
+                data-user-id="${user.id}"
+                data-full-name="${escapeHTML(user.fullName)}">
+                Edit Full Name
+            </button>
+        `;
+
+            usersList.appendChild(card);
+        });
+
+        // Add edit button actions
+        document.querySelectorAll(".edit-user-button")
+            .forEach(button => {
+
+                button.addEventListener("click", () => {
+
+                    editUser(
+                        button.dataset.userId,
+                        button.dataset.fullName
+                    );
+
+                });
+
+            });
+
+
+
+
+    } catch (error) {
+
+        usersList.innerHTML =
+            `<p>${escapeHTML(error.message)}</p>`;
+    }
+}
+
+// Refresh users button
+document.getElementById("refresh-users-button")
+    .addEventListener("click", loadAdminUsers);
+
+// Edit user's full name
+async function editUser(userId, currentFullName) {
+
+    const newFullName = prompt(
+        "Enter the new full name:",
+        currentFullName
+    );
+
+    if (newFullName === null) {
+        return;
+    }
+
+    const fullName = newFullName.trim();
+
+    if (fullName.length < 2 || fullName.length > 100) {
+        alert("Full name must be between 2 and 100 characters.");
+        return;
+    }
+
+    try {
+
+        await api(`/api/admin/users/${userId}`, {
+            method: "PUT",
+            body: { fullName }
+        });
+
+        alert("User name updated successfully!");
+
+        await loadAdminUsers();
+
+    } catch (error) {
+
+        alert("Failed to update user: " + error.message);
+
+    }
+}

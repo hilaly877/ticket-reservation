@@ -56,6 +56,24 @@ public class ReservationController {
         );
     }
 
+    // CUSTOMER: Update own reservation
+        @PreAuthorize("hasRole('CUSTOMER')")
+        @PutMapping("/{id}")
+        public ResponseEntity<ReservationResponse> updateReservation(
+                @PathVariable String id,
+                @Valid @RequestBody ReservationRequest request,
+                Authentication authentication) {
+
+        ReservationResponse response =
+                reservationService.updateReservation(
+                        id,
+                        request,
+                        authentication.getName()
+                );
+
+        return ResponseEntity.ok(response);
+        }
+
     // ADMIN / ORGANIZER: View reservations
     @PreAuthorize("hasAnyRole('ADMIN', 'ORGANIZER')")
     @GetMapping

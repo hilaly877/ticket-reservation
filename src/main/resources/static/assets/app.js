@@ -390,10 +390,19 @@ function displayReservations(reservations) {
 
             ${
                 reservation.status === "CONFIRMED"
-                    ? `<button class="cancel-button"
-                        data-reservation-id="${reservation.id}">
-                        Cancel Reservation
-                       </button>`
+                    ? `
+                        <button class="edit-seats-button"
+                            data-reservation-id="${reservation.id}"
+                            data-event-id="${reservation.eventId}"
+                            data-current-seats="${reservation.seats}">
+                            Edit Seats
+                        </button>
+
+                        <button class="cancel-button"
+                            data-reservation-id="${reservation.id}">
+                            Cancel Reservation
+                        </button>
+                    `
                     : ""
             }
         `;
@@ -406,6 +415,19 @@ function displayReservations(reservations) {
 
         button.addEventListener("click", () => {
             cancelReservation(button.dataset.reservationId);
+        });
+
+    });
+
+    // Add edit seat actions
+    document.querySelectorAll(".edit-seats-button").forEach(button => {
+
+        button.addEventListener("click", () => {
+            updateReservationSeats(
+                button.dataset.reservationId,
+                button.dataset.eventId,
+                Number(button.dataset.currentSeats)
+            );
         });
 
     });

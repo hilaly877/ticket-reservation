@@ -344,14 +344,24 @@ async function loadMyReservations() {
     reservationsList.innerHTML = "<p>Loading reservations...</p>";
 
     try {
-        const reservations =
-            await api("/api/reservations/my");
+
+        let endpoint;
+
+        if (state.role === "CUSTOMER") {
+            endpoint = "/api/reservations/my";
+        } else {
+            endpoint = "/api/reservations";
+        }
+
+        const reservations = await api(endpoint);
 
         displayReservations(reservations);
 
     } catch (error) {
+
         reservationsList.innerHTML =
             `<p>${escapeHTML(error.message)}</p>`;
+
     }
 }
 
@@ -388,23 +398,24 @@ function displayReservations(reservations) {
             <p><strong>Status:</strong>
                 ${escapeHTML(reservation.status)}</p>
 
-            ${
-                reservation.status === "CONFIRMED"
-                    ? `
-                        <button class="edit-seats-button"
-                            data-reservation-id="${reservation.id}"
-                            data-event-id="${reservation.eventId}"
-                            data-current-seats="${reservation.seats}">
-                            Edit Seats
-                        </button>
+${
+    reservation.status === "CONFIRMED" &&
+    state.role === "CUSTOMER"
+        ? `
+            <button class="edit-seats-button"
+                data-reservation-id="${reservation.id}"
+                data-event-id="${reservation.eventId}"
+                data-current-seats="${reservation.seats}">
+                Edit Seats
+            </button>
 
-                        <button class="cancel-button"
-                            data-reservation-id="${reservation.id}">
-                            Cancel Reservation
-                        </button>
-                    `
-                    : ""
-            }
+            <button class="cancel-button"
+                data-reservation-id="${reservation.id}">
+                Cancel Reservation
+            </button>
+        `
+        : ""
+}
         `;
 
         reservationsList.appendChild(card);

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>TicketHub</title>
+
+    <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+
+    <!-- Main application -->
+    <div class="container">
+
+        <!-- Header -->
+        <header>
+            <h1>🎟️ TicketHub</h1>
+            <p>Find events and book your tickets</p>
+        </header>
+
+        <!-- Login Section -->
+        <section id="login-section" class="card">
+
+            <h2>Login</h2>
+
+            <form id="login-form">
+
+                <input
+                    type="text"
+                    id="login-username"
+                    placeholder="Username"
+                    required
+                >
+
+                <input
+                    type="password"
+                    id="login-password"
+                    placeholder="Password"
+                    required
+                >
+
+                <button type="submit">Login</button>
+
+            </form>
+
+            <p id="login-message"></p>
+
+            <p>
+                Don't have an account?
+                <button id="show-register" class="link-button">
+                    Register
+                </button>
+            </p>
+
+        </section>
+
+        <!-- Register Section -->
+        <section id="register-section" class="card hidden">
+
+            <h2>Create Account</h2>
+
+            <form id="register-form">
+
+                <input
+                    type="text"
+                    id="register-username"
+                    placeholder="Username"
+                    required
+                >
+
+                <input
+                    type="password"
+                    id="register-password"
+                    placeholder="Password"
+                    required
+                >
+
+                <button type="submit">Register</button>
+
+            </form>
+
+            <p id="register-message"></p>
+
+            <p>
+                Already have an account?
+                <button id="show-login" class="link-button">
+                    Login
+                </button>
+            </p>
+
+        </section>
+
+        <!-- Dashboard Section -->
+        <section id="dashboard-section" class="hidden">
+
+            <div class="dashboard-header">
+
+                <div>
+                    <h2>Dashboard</h2>
+                    <p id="welcome-message"></p>
+                </div>
+
+                <button id="logout-button">Logout</button>
+
+            </div>
+
+            <!-- Navigation -->
+            <nav>
+                <button class="nav-button active" data-view="events">
+                    Events
+                </button>
+
+                <button class="nav-button" data-view="reservations">
+                    My Reservations
+                </button>
+
+                <button class="nav-button hidden" data-view="admin">
+                    Admin
+                </button>
+            </nav>
+
+            <!-- Events View -->
+            <div id="events-view" class="view">
+
+                <h2>Available Events</h2>
+
+                <input
+                    type="text"
+                    id="search-input"
+                    placeholder="Search events..."
+                >
+
+                <div id="events-list" class="events-grid">
+                    <!-- Events will be loaded here -->
+                </div>
+
+            </div>
+
+            <!-- Reservations View -->
+            <div id="reservations-view" class="view hidden">
+
+                <h2>My Reservations</h2>
+
+                <div id="reservations-list">
+                    <!-- Reservations will be loaded here -->
+                </div>
+
+            </div>
+
+            <!-- Admin View -->
+            <div id="admin-view" class="view hidden">
+
+                <h2>Admin Panel</h2>
+
+                <div id="admin-content">
+                    <!-- Admin content will be loaded here -->
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+
+    <!-- JavaScript -->
+    <script src="/assets/app.js"></script>
+
+</body>
+</html>

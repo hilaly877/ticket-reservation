@@ -31,6 +31,20 @@ const reservationsList = document.getElementById("reservations-list");
 const welcomeMessage = document.getElementById("welcome-message");
 const searchInput = document.getElementById("search-input");
 
+document.querySelectorAll(".password-toggle").forEach((button) => {
+    const passwordInput = document.getElementById(button.dataset.target);
+
+    button.addEventListener("click", () => {
+        const isVisible = passwordInput.type === "text";
+        passwordInput.type = isVisible ? "password" : "text";
+        button.setAttribute("aria-pressed", String(!isVisible));
+        button.setAttribute(
+            "aria-label",
+            isVisible ? "Show password" : "Hide password"
+        );
+    });
+});
+
 /* ---------- API HELPER ---------- */
 
 // Sends requests to the Spring Boot backend

@@ -65,6 +65,62 @@ input:focus {
     border-color: #5b45d6;
 }
 
+.password-field {
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.password-field input {
+    margin-bottom: 0;
+    padding-right: 48px;
+}
+
+.password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 7px;
+    display: grid;
+    width: 36px;
+    height: 36px;
+    padding: 8px;
+    place-items: center;
+    transform: translateY(-50%);
+    background: transparent;
+    color: #5b45d6;
+}
+
+.password-toggle:hover {
+    background: #f3f1ff;
+}
+
+.password-toggle:focus-visible {
+    outline: 2px solid #5b45d6;
+    outline-offset: 2px;
+}
+
+.password-toggle svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+}
+
+.password-toggle .eye-off-icon,
+.password-toggle[aria-pressed="true"] .eye-icon {
+    display: none;
+}
+
+.password-toggle[aria-pressed="true"] .eye-off-icon {
+    display: block;
+}
+
+#create-user-form .password-field {
+    margin-bottom: 0;
+}
+
 /* ---------- Buttons ---------- */
 button {
     padding: 11px 16px;
